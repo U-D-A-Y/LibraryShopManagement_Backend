@@ -1,4 +1,4 @@
-const mysql=require('mysql')
+const mysql=require('mysql2/promise')
 const config={
     host:'localhost',
     user:'root',
@@ -14,9 +14,6 @@ module.exports.getConnection = () => {
     return this.connection;
 }
 
-module.exports.connectDataBase = () => {
-    this.connection.connect((err) => {
-        if (err) throw err;
-        console.log('Database is connected as id ' + this.connection.threadId)
-    })
+module.exports.connectDataBase = async () => {
+    this.connection = await mysql.createConnection(config);
 }

@@ -1,6 +1,5 @@
 const express = require('express');
 const app = express();
-const mysql = require('mysql');
 const database = require('./databaseConfi')
 const dashBoardApi = require('./api/libraryApi')
 const cors = require('cors');
