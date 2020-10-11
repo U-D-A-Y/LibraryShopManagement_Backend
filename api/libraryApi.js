@@ -81,8 +81,7 @@ router.get('/books', async (req, res) => {
 router.post('/book', (req, res) => {
 
     let query = `INSERT INTO books (NAME,ISBN,CATEGORY_FK,AUTHOR_NAME,PUBLICATION_BY_FK,PUBLICATION_YEAR,NUMBER_OF_PAGE,PRICE,QUANTITY,DESCRIPTION)values("${req.body.BOOK_NAME}","${req.body.ISBN}",${req.body.CATEGORY_FK},"${req.body.AUTHOR_NAME}",${req.body.PUBLICATION_BY_FK}, ${req.body.PUBLICATION_YEAR}, ${req.body.NUMBER_OF_PAGE},${req.body.PRICE}, ${req.body.QUANTITY}, "${req.body.DESCRIPTION}");
-    `
-    console.log(query)
+    `;
     database.connection.query(query, (err, result, field) => {
         if (result) {
             res.json(result)
@@ -95,6 +94,7 @@ router.post('/book', (req, res) => {
 
 
 })
+
 router.delete('/book/:id', (req, res) => {
 
     let query = `DELETE FROM books where BOOK_PK=${req.params.id}`
@@ -122,6 +122,8 @@ router.patch('/book', (req, res) => {
     })()
 })
 
+
+
 //Publisher API
 router.get('/publishers', (req, res) => {
     let query = `select * from publishers`;
@@ -134,6 +136,45 @@ router.get('/publishers', (req, res) => {
         }
     })()
 })
+
+router.post('/publisher', (req, res) => {
+    let query = `INSERT INTO publishers (NAME,PHONE,ADDRESS,DESCRIPTION) values(?,?,?,?);`;
+    (async () => {
+        try {
+            const result = await database.connection.query(query,[req.body.NAME,req.body.PHONE,req.body.ADDRESS,req.body.DESCRIPTION]);
+            res.json(result[0]);
+        } catch (error) {
+
+        }
+    })()
+
+})
+
+router.delete('/publisher/:id', (req, res) => {
+    let query = `DELETE FROM publishers where PUBLISHER_PK=?`;
+    (async () => {
+        try {
+            const result = await database.connection.query(query, [req.params.id])
+            res.json(result)
+        } catch (error) {
+
+        }
+    })()
+})
+
+router.patch('/publisher', (req, res) => {
+    let query = `UPDATE publishers SET NAME=?,PHONE=?,ADDRESS=?,DESCRIPTION=? where PUBLISHER_PK=?;`;
+    (async () => {
+        try {
+            const result = await database.connection.query(query, [req.body.NAME,req.body.PHONE,req.body.ADDRESS,req.body.DESCRIPTION, req.body.PUBLISHER_PK])
+            res.json(result[0])
+        } catch (error) {
+
+        }
+    })()
+})
+
+
 
 
 
@@ -194,5 +235,21 @@ router.post('/transaction', async (req, res) => {
 
 })
 
+
+
+
+//sales details
+
+router.get('/sales-details/:start/:end',(req,res)=>{
+    (async ()=>{
+        try {
+            let query=`select  s.SALE_PK as TRN_NO, c.NAME as CUSTOMER_NAME,Date(s.SALE_TIME) as DATE,s.COMMISSION,sum(b.PRICE*sd.QUENTITY) as TOTAL,sum(b.PRICE*sd.QUENTITY)-sum(b.PRICE*sd.QUENTITY)*(s.COMMISSION/100) as NET_TOTALfrom  sales as s join sale_details as sd on s.SALE_PK=sd.SALE_FK  join books as b  on sd.BOOK_FK=b.BOOK_PK   join customers as c on s.CUSTOMER_FK=c.CUSTOMER_PKwhere SALE_TIME between ? and ? group by s.SALE_PK;`;
+            let [rows]=await database.connection.query(query,[req.params.start,req.params.start])
+            res.json(rows)
+        } catch (error) {
+            
+        }
+    })()
+})
 
 module.exports = router;
