@@ -2,7 +2,20 @@ const router = require('express').Router();
 const database = require('../databaseConfi')
 
 
+router.post('/login', (req, res) => {
+    let data = req.body.data;
+    let query = `select * from users where name=? and password=? limit 1`;
+    (async()=>{
+        try {
+            const[rows]=await database.connection.query(query,[data.userName,data.password])
+            res.json({token:'sssshhe'})
+        } catch (error) {
+            
+        }
+    })()
+  
 
+})
 
 
 // Categories Api
