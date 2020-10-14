@@ -1,22 +1,19 @@
 const router = require('express').Router();
 const database = require('../databaseConfi')
+const authService = require('../service/auth')
 
 
-router.post('/login', (req, res) => {
-    let data = req.body.data;
-    let query = `select * from users where name=? and password=? limit 1`;
-    (async()=>{
-        try {
-            const[rows]=await database.connection.query(query,[data.userName,data.password])
-            res.json({token:'sssshhe'})
-        } catch (error) {
-            
-        }
-    })()
-  
-
-})
-
+router.use(auth)
+function auth (req,res,next){
+    try {
+        authService.decodedToken(req.headers.authorization.split(" ")[1])
+        next();
+    } catch (error) {
+        res.status(401).send('Unauthrized')
+    }
+   
+   
+}
 
 // Categories Api
 
@@ -111,7 +108,6 @@ router.post('/book', (req, res) => {
 router.delete('/book/:id', (req, res) => {
 
     let query = `DELETE FROM books where BOOK_PK=${req.params.id}`
-    console.log(query)
     database.connection.query(query, (err, result, field) => {
         if (result) {
             res.json(result)
