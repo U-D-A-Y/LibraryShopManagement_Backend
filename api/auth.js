@@ -20,7 +20,7 @@ router.post('/login', (req, res) => {
             }
             
         } catch (error) {
-            
+            res.json({token:'',authentic:false,err:error})
         }
     })()
   

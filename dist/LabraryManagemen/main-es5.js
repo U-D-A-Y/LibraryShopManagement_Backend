@@ -4158,7 +4158,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         _classCallCheck(this, Http);
 
         this.http = http;
-        this.baseUrl = "http://localhost:3000/api";
+        this.baseUrl = "api";
       }
 
       _createClass(Http, [{

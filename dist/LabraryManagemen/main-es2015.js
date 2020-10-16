@@ -1973,7 +1973,7 @@ __webpack_require__.r(__webpack_exports__);
 class Http {
     constructor(http) {
         this.http = http;
-        this.baseUrl = "http://localhost:3000/api";
+        this.baseUrl = "api";
     }
     getData(url) {
         return this.http.get(`${this.baseUrl}/${url}`);
